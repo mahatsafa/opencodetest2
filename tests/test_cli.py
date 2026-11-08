@@ -20,7 +20,7 @@ class UjiCliDasar(unittest.TestCase):
     def test_versi(self):
         hasil = jalankan_cli("versi")
         self.assertEqual(hasil.returncode, 0)
-        self.assertEqual(hasil.stdout.strip(), "sidik-jari 0.1.0")
+        self.assertEqual(hasil.stdout.strip(), "sidik-jari 0.1.1")
 
     def test_buat_json_satu_file_satu_penanda(self):
         path = tulis(os.path.join(self.dasar, "data.bin"), b"halo SIDIK dunia")

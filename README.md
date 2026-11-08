@@ -76,7 +76,7 @@ Kode keluar `cocokkan`: `0` semua sama, `1` ada beda/hilang, `2` error input
 python3 -m sidik_jari versi
 ```
 
-Cetak `sidik-jari 0.1.0`.
+Cetak `sidik-jari 0.1.1`.
 
 ## Format JSON
 

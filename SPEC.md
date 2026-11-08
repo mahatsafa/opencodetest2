@@ -1,4 +1,4 @@
-# sidik-jari — spesifikasi v0.1.0
+# sidik-jari — spesifikasi v0.1.1
 
 CLI untuk membuktikan bahwa yang diuji/di-deploy memang build terbaru ("sidik jari").
 Aturan asal: binary/OS = sha256 + string penanda di binary; web = hash commit + URL deploy.
@@ -26,7 +26,7 @@ Aturan asal: binary/OS = sha256 + string penanda di binary; web = hash commit + 
 2. `cocokkan sidik.json [--tanpa-url]` -> hitung ulang semua dari isi JSON (file, penanda, git, url) dan bandingkan.
    Cetak tabel per butir: SAMA / BEDA (lama -> baru) / HILANG. Kode keluar 0 semua sama, 1 ada beda, 2 error input.
    JSON tidak valid / versi format tak dikenal -> 2.
-3. `versi` -> cetak "sidik-jari 0.1.0".
+3. `versi` -> cetak "sidik-jari 0.1.1".
 
 ## Format JSON
 {"format": 1, "dibuat": ISO8601 UTC, "file": [...], "git": {...}|null, "url": {...}|null}

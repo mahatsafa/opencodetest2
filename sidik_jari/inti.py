@@ -114,9 +114,9 @@ def kumpulkan_file(path_list: list[str], penanda_list: list[str]) -> list[dict]:
         try:
             with open(absolut, "rb") as f:
                 ukuran, sha = sha256_dan_ukuran(absolut)
-                f.seek(0)
                 daftar_penanda = []
                 for teks, b in zip(penanda_list, penanda_bytes):
+                    f.seek(0)
                     ditemukan, jumlah, offset = cari_penanda(f, b)
                     daftar_penanda.append({
                         "penanda": teks,
@@ -187,7 +187,7 @@ def ambil_url(url: str, cari_list: list[str], commit_12: str | None = None) -> d
     skema = urllib.parse.urlsplit(url).scheme
     if skema not in ("http", "https"):
         raise Galat(f"skema '{skema or '(kosong)'}' tidak didukung (hanya http/https)")
-    permintaan = urllib.request.Request(url, headers={"User-Agent": "sidik-jari/0.1.0"})
+    permintaan = urllib.request.Request(url, headers={"User-Agent": "sidik-jari/0.1.1"})
     try:
         resp = urllib.request.urlopen(permintaan, timeout=WAKTU_URL)
     except urllib.error.HTTPError as e:
@@ -336,7 +336,7 @@ def _cocokkan_url(rekam: dict, baris: list[str], commit_12: str | None) -> bool:
         baris.append(f"URL {url}: BEDA (tidak terbaca: {e})")
         return False
     detail = []
-    for bidang in ("status", "ukuran", "sha256", "etag", "last_modified", "x_vercel_id"):
+    for bidang in ("status", "ukuran", "sha256", "etag", "last_modified"):
         if rekam.get(bidang) != baru.get(bidang):
             detail.append(f"{bidang}: {rekam.get(bidang)!r} -> {baru.get(bidang)!r}")
     lama_cari = {c.get("teks"): c for c in (rekam.get("cari") or [])}
@@ -359,10 +359,30 @@ def cocokkan(path_json: str, tanpa_url: bool = False) -> tuple[int, list[str]]:
     Kode: 0 semua sama, 1 ada beda, 2 error input (lempar Galat).
     """
     data = baca_sidik(path_json)
+
+    # Validasi input dari luar sebelum dipakai
+    daftar_file = data.get("file") or []
+    if not isinstance(daftar_file, list):
+        raise Galat("bagian file salah bentuk (harus list)")
+    if len(daftar_file) > MAKS_FILE:
+        raise Galat(f"terlalu banyak file (maks {MAKS_FILE})")
+
+    for entri in daftar_file:
+        if not isinstance(entri, dict):
+            raise Galat("entri file salah bentuk")
+        daftar_penanda = entri.get("penanda") or []
+        if not isinstance(daftar_penanda, list) or not all(
+                isinstance(p, dict) for p in daftar_penanda):
+            raise Galat("bagian penanda salah bentuk (harus list objek)")
+        penanda_list = [str(p.get("penanda", "")) for p in daftar_penanda]
+        if len(penanda_list) > MAKS_PENANDA:
+            raise Galat(f"terlalu banyak penanda (maks {MAKS_PENANDA})")
+        validasi_penanda(penanda_list)
+
     baris: list[str] = []
     sama_semua = True
 
-    for entri in data.get("file") or []:
+    for entri in daftar_file:
         if not isinstance(entri, dict):
             raise Galat("entri file salah bentuk")
         if not _cocokkan_file(entri, baris):
