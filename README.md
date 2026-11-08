@@ -61,7 +61,7 @@ keadaan sekarang. Cetak per butir: `SAMA` / `BEDA (lama -> baru)` / `HILANG`.
 
 Alur kerja:
 
-1. Sebelum deploy/tearing: `buat ... -o sidik.json`
+1. Sesudah build/uji, sebelum deploy: `buat ... -o sidik.json`
 2. Setelah deploy (atau nanti): `cocokkan sidik.json`
 3. Semua `SAMA` (kode keluar 0) = yang ada di lapangan memang build terbaru.
 
@@ -69,6 +69,9 @@ Kode keluar `cocokkan`: `0` semua sama, `1` ada beda/hilang, `2` error input
 (JSON rusak, versi format tak dikenal).
 
 `--tanpa-url` mematikan pemeriksaan bagian URL (berguna saat offline).
+
+Bagian URL yang dibandingkan: status, ukuran, sha256 body, ETag, Last-Modified, dan hasil `--cari-di-url`.
+`X-Vercel-Id` hanya dicatat sebagai info (nilainya berubah tiap request, jadi tidak dibandingkan).
 
 ### versi
 
